@@ -15,17 +15,11 @@ import io.codebottle.api.rest.Endpoint;
 import org.jetbrains.annotations.Nullable;
 
 public final class CodeBottle {
-    private static final ObjectMapper objectMapper;
-
     private final Map<Integer, Language> languageCache = new ConcurrentHashMap<>();
     private final Map<Integer, Category> categoryCache = new ConcurrentHashMap<>();
     private final Map<Integer, Snippet> snippetCache = new ConcurrentHashMap<>();
 
     private final String token;
-
-    static {
-        objectMapper = new ObjectMapper();
-    }
 
     public CodeBottle() {
         this(null);
