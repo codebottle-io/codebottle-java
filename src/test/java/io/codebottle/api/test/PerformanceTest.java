@@ -10,21 +10,14 @@ import org.junit.Test;
 import static java.lang.System.currentTimeMillis;
 
 public class PerformanceTest {
-    private CodeBottle codeBottle;
-
-    @Before
-    public void setUp() {
-        this.codeBottle = new CodeBottle();
-    }
-    
     @Test
     public void requestEverything() {
         long start, end;
         
         System.out.printf("Started requesting everything at %d epoch\n", start = currentTimeMillis());
+        
+        final CodeBottle codeBottle = new CodeBottle();
 
-        codeBottle.requestLanguages().join();
-        codeBottle.requestCategories().join();
         codeBottle.requestSnippets().join()
                 .stream()
                 .map(Snippet::requestRevisions)
