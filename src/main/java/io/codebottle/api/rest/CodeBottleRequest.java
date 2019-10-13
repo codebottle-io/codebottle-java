@@ -94,6 +94,8 @@ public final class CodeBottleRequest<T> {
         return CompletableFuture.supplyAsync(() -> {
             final Request request = httpRequest.build();
 
+            System.out.println("Requesting: " + request.method() + " @ " + request.url().toString());
+
             try {
                 final Call call = httpClient.newCall(request);
 
