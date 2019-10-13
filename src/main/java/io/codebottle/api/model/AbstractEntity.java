@@ -7,11 +7,11 @@ import io.codebottle.api.CodeBottle;
 public abstract class AbstractEntity {
     protected final CodeBottle context;
 
-    protected final @JsonProperty(required = true) int id;
+    protected final @JsonProperty(required = true) String id;
 
     protected AbstractEntity(CodeBottle context, JsonNode data) {
         this.context = context;
-        this.id = data.get("id").asInt();
+        this.id = data.get("id").asText();
 
         update(data);
     }
@@ -19,10 +19,10 @@ public abstract class AbstractEntity {
     public AbstractEntity(CodeBottle context, int id) {
         this.context = context;
 
-        this.id = id;
+        this.id = String.valueOf(id);
     }
 
-    public int getID() {
+    public String getID() {
         return id;
     }
 

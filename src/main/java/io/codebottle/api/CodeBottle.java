@@ -1,6 +1,7 @@
 package io.codebottle.api;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -20,9 +21,9 @@ import org.jetbrains.annotations.Nullable;
 public final class CodeBottle {
     public final CompletionStage<Void> lazyLoading;
 
-    private final Map<Integer, Language> languageCache = new ConcurrentHashMap<>();
-    private final Map<Integer, Category> categoryCache = new ConcurrentHashMap<>();
-    private final Map<Integer, Snippet> snippetCache = new ConcurrentHashMap<>();
+    private final Map<String, Language> languageCache = new ConcurrentHashMap<>();
+    private final Map<String, Category> categoryCache = new ConcurrentHashMap<>();
+    private final Map<String, Snippet> snippetCache = new ConcurrentHashMap<>();
     private final String token;
 
     public CodeBottle() {
@@ -38,16 +39,20 @@ public final class CodeBottle {
     public Optional<String> getToken() {
         return Optional.ofNullable(token);
     }
-
-    public Optional<Language> getLanguageByID(int id) {
-        if (id == -1) return Optional.empty();
-
+    
+    public Optional<Language> getLanguageByID(String id) {
         synchronized (languageCache) {
             return Optional.ofNullable(languageCache.get(id));
         }
     }
 
-    public CompletableFuture<Language> requestLanguageByID(int id) {
+    public Collection<Language> getLanguages() {
+        synchronized (languageCache) {
+            return languageCache.values();
+        }
+    }
+
+    public CompletableFuture<Language> requestLanguageByID(String id) {
         return new CodeBottleRequest<Language>(this)
                 .to(Endpoint.LANGUAGE_SPECIFIC, id)
                 .makeGET()
@@ -69,7 +74,7 @@ public final class CodeBottle {
                 .then(data -> {
                     synchronized (languageCache) {
                         return StreamSupport.stream(data.spliterator(), false)
-                                .map(node -> getLanguageByID(node.path("id").asInt())
+                                .map(node -> getLanguageByID(node.path("id").asText())
                                         .map(entity -> entity.update(node))
                                         .orElseGet(() -> {
                                             final Language language = new Language(this, node);
@@ -83,15 +88,19 @@ public final class CodeBottle {
                 });
     }
 
-    public Optional<Category> getCategoryByID(int id) {
-        if (id == -1) return Optional.empty();
-
+    public Optional<Category> getCategoryByID(String id) {
         synchronized (categoryCache) {
             return Optional.ofNullable(categoryCache.get(id));
         }
     }
 
-    public CompletableFuture<Category> requestCategoryByID(int id) {
+    public Collection<Category> getCategories() {
+        synchronized (categoryCache) {
+            return categoryCache.values();
+        }
+    }
+
+    public CompletableFuture<Category> requestCategoryByID(String id) {
         return new CodeBottleRequest<Category>(this)
                 .to(Endpoint.CATEGORY_SPECIFIC, id)
                 .makeGET()
@@ -113,7 +122,7 @@ public final class CodeBottle {
                 .then(data -> {
                     synchronized (categoryCache) {
                         return StreamSupport.stream(data.spliterator(), false)
-                                .map(node -> getCategoryByID(node.path("id").asInt())
+                                .map(node -> getCategoryByID(node.path("id").asText())
                                         .map(entity -> entity.update(node))
                                         .orElseGet(() -> {
                                             final Category category = new Category(this, node);
@@ -127,15 +136,19 @@ public final class CodeBottle {
                 });
     }
 
-    public Optional<Snippet> getSnippetByID(int id) {
-        if (id == -1) return Optional.empty();
-
+    public Optional<Snippet> getSnippetByID(String id) {
         synchronized (snippetCache) {
             return Optional.ofNullable(snippetCache.get(id));
         }
     }
 
-    public CompletableFuture<Snippet> requestSnippetByID(int id) {
+    public Collection<Snippet> getSnippets() {
+        synchronized (snippetCache) {
+            return snippetCache.values();
+        }
+    }
+
+    public CompletableFuture<Snippet> requestSnippetByID(String id) {
         return new CodeBottleRequest<Snippet>(this)
                 .to(Endpoint.SNIPPET_SPECIFIC, id)
                 .makeGET()
@@ -157,7 +170,7 @@ public final class CodeBottle {
                 .then(data -> {
                     synchronized (snippetCache) {
                         return StreamSupport.stream(data.spliterator(), false)
-                                .map(node -> getSnippetByID(node.path("id").asInt())
+                                .map(node -> getSnippetByID(node.path("id").asText())
                                         .map(entity -> entity.update(node))
                                         .orElseGet(() -> {
                                             final Snippet snippet = new Snippet(this, node);
@@ -171,22 +184,29 @@ public final class CodeBottle {
                 });
     }
 
-    public Optional<Snippet.Revision> getSnippetRevisionByID(int snippetId, int id) throws IndexOutOfBoundsException {
-        if (id == -1) return Optional.empty();
-
+    public Optional<Snippet.Revision> getSnippetRevisionByID(String snippetId, int id) throws IndexOutOfBoundsException {
         synchronized (snippetCache) {
-            return Optional.ofNullable(snippetCache.get(id))
+            return Optional.ofNullable(snippetCache.get(snippetId))
                     .flatMap(snippet -> snippet.getRevisionByID(id));
         }
     }
+    
+    public Collection<Snippet.Revision> getSnippetRevisions() {
+        synchronized (snippetCache) {
+            return snippetCache.values()
+                    .stream()
+                    .flatMap(snippet -> snippet.getRevisions().stream())
+                    .collect(Collectors.toList());
+        }
+    }
 
-    public CompletableFuture<Snippet.Revision> requestSnippetRevision(int snippetId, int id) {
+    public CompletableFuture<Snippet.Revision> requestSnippetRevision(String snippetId, int id) {
         return getSnippetByID(snippetId)
                 .orElseGet(() -> requestSnippetByID(snippetId).join())
                 .requestRevision(id);
     }
 
-    public CompletableFuture<List<Snippet.Revision>> requestSnippetRevisions(int snippetId, int id) {
+    public CompletableFuture<List<Snippet.Revision>> requestSnippetRevisions(String snippetId, int id) {
         return getSnippetByID(snippetId)
                 .orElseGet(() -> requestSnippetByID(snippetId).join())
                 .requestRevisions();

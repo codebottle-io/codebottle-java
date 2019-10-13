@@ -2,6 +2,7 @@ package io.codebottle.api.model;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -80,10 +81,10 @@ public class Snippet extends AbstractEntity {
         this.description = data.path("description").asText(description);
         this.code = data.path("code").asText(code);
         this.views = data.path("views").asInt(views);
-        this.language = context.getLanguageByID(data.path("language").path("id").asInt(-1))
+        this.language = context.getLanguageByID(data.path("language").path("id").asText(null))
                 .orElseGet(() -> new Language(context, data.path("language")))
                 .update(data.path("language"));
-        this.category = context.getCategoryByID(data.path("category").path("id").asInt(-1))
+        this.category = context.getCategoryByID(data.path("category").path("id").asText(null))
                 .orElseGet(() -> new Category(context, data.path("category")))
                 .update(data.path("category"));
         this.votes = data.path("votes").asInt(votes);
@@ -102,6 +103,10 @@ public class Snippet extends AbstractEntity {
         synchronized (revisions) {
             return Optional.ofNullable(revisions.get(id));
         }
+    }
+
+    public Collection<Revision> getRevisions() {
+        return Collections.unmodifiableCollection(revisions);
     }
 
     public CompletableFuture<Revision> requestRevision(int id) {
@@ -214,10 +219,10 @@ public class Snippet extends AbstractEntity {
             this.title = data.path("title").asText(title);
             this.description = data.path("description").asText(description);
             this.code = data.path("code").asText(code);
-            this.language = context.getLanguageByID(data.path("language").path("id").asInt(-1))
+            this.language = context.getLanguageByID(data.path("language").path("id").asText(null))
                     .orElseGet(() -> new Language(context, data.path("language")))
                     .update(data.path("language"));
-            this.category = context.getCategoryByID(data.path("category").path("id").asInt(-1))
+            this.category = context.getCategoryByID(data.path("category").path("id").asText(null))
                     .orElseGet(() -> new Category(context, data.path("category")))
                     .update(data.path("category"));
             this.author = data.path("author").asText(author);

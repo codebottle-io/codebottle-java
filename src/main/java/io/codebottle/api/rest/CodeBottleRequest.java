@@ -8,7 +8,6 @@ import java.util.function.Function;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import io.codebottle.api.CodeBottle;
 import io.codebottle.api.rest.exception.UnexpectedStatusCodeException;
 import okhttp3.Call;
@@ -48,7 +47,7 @@ public final class CodeBottleRequest<T> {
 
     private final Request.Builder httpRequest;
 
-    private int expected;
+    private int expected = HTTPCodes.OK;
 
     static {
         objectMapper = new ObjectMapper();
@@ -66,13 +65,14 @@ public final class CodeBottleRequest<T> {
     }
 
     public CodeBottleRequest<T> make(Method method, JsonNode withData) {
-        httpRequest.method(method.name(), RequestBody.create(withData.toString(), MediaType.parse("application/json")));
+        httpRequest.method(method.name(), method == Method.GET ? null : RequestBody.create(withData.toString(), MediaType.parse("application/json")));
 
         return this;
     }
 
     public CodeBottleRequest<T> makeGET() {
-        return make(Method.GET, JsonNodeFactory.instance.objectNode());
+        //noinspection ConstantConditions
+        return make(Method.GET, null);
     }
 
     public CodeBottleRequest<T> to(Endpoint endpoint, Object... at) throws IllegalArgumentException {

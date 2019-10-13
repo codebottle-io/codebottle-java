@@ -7,7 +7,7 @@ import static java.lang.String.format;
 
 public enum Endpoint {
     // Languages
-    LANGUAGES("language"),
+    LANGUAGES("languages"),
     LANGUAGE_SPECIFIC("language/%s"),
 
     // Categories
