@@ -12,7 +12,6 @@ import io.codebottle.api.CodeBottle;
 import io.codebottle.api.rest.exception.UnexpectedStatusCodeException;
 import okhttp3.Call;
 import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -43,25 +42,28 @@ public final class CodeBottleRequest<T> {
      */
 
     private final static ObjectMapper objectMapper;
-    private final static OkHttpClient httpClient;
 
     private final Request.Builder httpRequest;
+    private final CodeBottle context;
 
     private int expected = HTTPCodes.OK;
 
     static {
         objectMapper = new ObjectMapper();
-        httpClient = new OkHttpClient.Builder()
-                .build();
     }
 
     public CodeBottleRequest(CodeBottle context) {
+        this.context = context;
         this.httpRequest = new Request.Builder()
                 .addHeader("Accept", "application/vnd.codebottle.v1+json"); // fixed request header
 
         // Experimental Feature:
         // Add the token as 'Authorization' header ifPresent
         context.getToken().ifPresent(token -> httpRequest.addHeader("Authorization", token));
+    }
+
+    public CodeBottle getContext() {
+        return context;
     }
 
     public CodeBottleRequest<T> make(Method method, JsonNode withData) {
@@ -84,7 +86,7 @@ public final class CodeBottleRequest<T> {
 
     public CodeBottleRequest<T> andExpect(@MagicConstant(valuesFromClass = HTTPCodes.class) int responseCode) throws IllegalArgumentException {
         this.expected = responseCode;
-        
+
         return this;
     }
 
@@ -95,7 +97,8 @@ public final class CodeBottleRequest<T> {
             System.out.println("Requesting: " + request.method() + " @ " + request.url().toString());
 
             try {
-                final Call call = httpClient.newCall(request);
+                final Call call = context.getHttpClient()
+                        .newCall(request);
 
                 final Response response = call.execute();
                 final ResponseBody body = response.body();

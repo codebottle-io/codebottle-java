@@ -1,7 +1,6 @@
 package io.codebottle.api;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -16,30 +15,33 @@ import io.codebottle.api.model.Language;
 import io.codebottle.api.model.Snippet;
 import io.codebottle.api.rest.CodeBottleRequest;
 import io.codebottle.api.rest.Endpoint;
+import lombok.Builder;
+import lombok.Getter;
+import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.Nullable;
 
+@Builder
 public final class CodeBottle {
     public final CompletionStage<Void> lazyLoading;
 
     private final Map<String, Language> languageCache = new ConcurrentHashMap<>();
     private final Map<String, Category> categoryCache = new ConcurrentHashMap<>();
     private final Map<String, Snippet> snippetCache = new ConcurrentHashMap<>();
-    private final String token;
+    
+    @Builder.Default
+    private final @Nullable String token = null;
+    @Builder.Default
+    private @Getter final OkHttpClient httpClient = new OkHttpClient.Builder().build(); 
 
-    public CodeBottle() {
-        this(null);
-    }
-
-    public CodeBottle(@Nullable String token) {
-        this.token = token;
-
+    {
         this.lazyLoading = CompletableFuture.allOf(requestLanguages(), requestCategories());
     }
 
+    @SuppressWarnings("ConstantConditions")
     public Optional<String> getToken() {
         return Optional.ofNullable(token);
     }
-    
+
     public Optional<Language> getLanguageByID(String id) {
         return Optional.ofNullable(languageCache.get(id));
     }
@@ -176,7 +178,7 @@ public final class CodeBottle {
         return Optional.ofNullable(snippetCache.get(snippetId))
                 .flatMap(snippet -> snippet.getRevisionByID(id));
     }
-    
+
     public Collection<Snippet.Revision> getSnippetRevisions() {
         return snippetCache.values()
                 .stream()
