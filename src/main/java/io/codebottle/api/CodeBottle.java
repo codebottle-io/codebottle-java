@@ -41,15 +41,11 @@ public final class CodeBottle {
     }
     
     public Optional<Language> getLanguageByID(String id) {
-        synchronized (languageCache) {
-            return Optional.ofNullable(languageCache.get(id));
-        }
+        return Optional.ofNullable(languageCache.get(id));
     }
 
     public Collection<Language> getLanguages() {
-        synchronized (languageCache) {
-            return languageCache.values();
-        }
+        return languageCache.values();
     }
 
     public CompletableFuture<Language> requestLanguageByID(String id) {
@@ -89,15 +85,11 @@ public final class CodeBottle {
     }
 
     public Optional<Category> getCategoryByID(String id) {
-        synchronized (categoryCache) {
-            return Optional.ofNullable(categoryCache.get(id));
-        }
+        return Optional.ofNullable(categoryCache.get(id));
     }
 
     public Collection<Category> getCategories() {
-        synchronized (categoryCache) {
-            return categoryCache.values();
-        }
+        return categoryCache.values();
     }
 
     public CompletableFuture<Category> requestCategoryByID(String id) {
@@ -137,15 +129,11 @@ public final class CodeBottle {
     }
 
     public Optional<Snippet> getSnippetByID(String id) {
-        synchronized (snippetCache) {
-            return Optional.ofNullable(snippetCache.get(id));
-        }
+        return Optional.ofNullable(snippetCache.get(id));
     }
 
     public Collection<Snippet> getSnippets() {
-        synchronized (snippetCache) {
-            return snippetCache.values();
-        }
+        return snippetCache.values();
     }
 
     public CompletableFuture<Snippet> requestSnippetByID(String id) {
@@ -185,19 +173,15 @@ public final class CodeBottle {
     }
 
     public Optional<Snippet.Revision> getSnippetRevisionByID(String snippetId, int id) throws IndexOutOfBoundsException {
-        synchronized (snippetCache) {
-            return Optional.ofNullable(snippetCache.get(snippetId))
-                    .flatMap(snippet -> snippet.getRevisionByID(id));
-        }
+        return Optional.ofNullable(snippetCache.get(snippetId))
+                .flatMap(snippet -> snippet.getRevisionByID(id));
     }
     
     public Collection<Snippet.Revision> getSnippetRevisions() {
-        synchronized (snippetCache) {
-            return snippetCache.values()
-                    .stream()
-                    .flatMap(snippet -> snippet.getRevisions().stream())
-                    .collect(Collectors.toList());
-        }
+        return snippetCache.values()
+                .stream()
+                .flatMap(snippet -> snippet.getRevisions().stream())
+                .collect(Collectors.toList());
     }
 
     public CompletableFuture<Snippet.Revision> requestSnippetRevision(String snippetId, int id) {

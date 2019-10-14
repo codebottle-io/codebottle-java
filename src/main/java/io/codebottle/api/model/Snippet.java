@@ -103,9 +103,7 @@ public class Snippet extends AbstractEntity {
     }
 
     public Optional<Revision> getRevisionByID(int id) throws IndexOutOfBoundsException {
-        synchronized (revisions) {
-            return Optional.ofNullable(revisions.get(id));
-        }
+        return Optional.ofNullable(revisions.get(id));
     }
 
     public Collection<Revision> getRevisions() {
