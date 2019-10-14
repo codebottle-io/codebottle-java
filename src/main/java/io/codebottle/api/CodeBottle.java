@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Builder
 public final class CodeBottle {
-    public final CompletionStage<Void> lazyLoading;
+    public final CompletionStage<Void> lazyLoading = CompletableFuture.allOf(requestLanguages(), requestCategories());
 
     private final Map<String, Language> languageCache = new ConcurrentHashMap<>();
     private final Map<String, Category> categoryCache = new ConcurrentHashMap<>();
@@ -31,11 +31,7 @@ public final class CodeBottle {
     @Builder.Default
     private final @Nullable String token = null;
     @Builder.Default
-    private @Getter final OkHttpClient httpClient = new OkHttpClient.Builder().build(); 
-
-    {
-        this.lazyLoading = CompletableFuture.allOf(requestLanguages(), requestCategories());
-    }
+    private @Getter final OkHttpClient httpClient = new OkHttpClient.Builder().build();
 
     @SuppressWarnings("ConstantConditions")
     public Optional<String> getToken() {

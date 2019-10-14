@@ -16,7 +16,7 @@ public class PerformanceTest {
         
         System.out.printf("Started requesting everything at %d epoch\n", start = currentTimeMillis());
         
-        final CodeBottle codeBottle = new CodeBottle();
+        final CodeBottle codeBottle = CodeBottle.builder().build();
 
         codeBottle.requestSnippets().join()
                 .stream()
