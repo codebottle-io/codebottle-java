@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -13,6 +14,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.codebottle.api.CodeBottle;
 import io.codebottle.api.rest.CodeBottleRequest;
 import io.codebottle.api.rest.Endpoint;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Snippet extends AbstractEntity {
@@ -168,7 +171,9 @@ public class Snippet extends AbstractEntity {
                 });
     }
 
-    public static class Revision extends AbstractEntity {
+    public static class Revision extends AbstractEntity implements Comparable<Revision> {
+        public static final Comparator<Revision> REVISION_COMPARATOR = Comparator.comparingInt(entity -> Integer.parseInt(entity.getID()));
+        
         private @JsonProperty(required = true) String title;
         private @JsonProperty @Nullable String description;
         private @JsonProperty(required = true) String code;
@@ -232,6 +237,12 @@ public class Snippet extends AbstractEntity {
                     .orElse(createdAt);
 
             return this;
+        }
+
+        @Override 
+        @Contract(pure = true)
+        public int compareTo(@NotNull Snippet.Revision other) {
+            return 0;
         }
     }
 }
