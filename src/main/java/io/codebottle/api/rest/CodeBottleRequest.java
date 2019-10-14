@@ -83,10 +83,8 @@ public final class CodeBottleRequest<T> {
     }
 
     public CodeBottleRequest<T> andExpect(@MagicConstant(valuesFromClass = HTTPCodes.class) int responseCode) throws IllegalArgumentException {
-        if (HTTPCodes.getName(responseCode) == null)
-            throw new IllegalArgumentException("Invalid code entered: " + responseCode);
-
         this.expected = responseCode;
+        
         return this;
     }
 
