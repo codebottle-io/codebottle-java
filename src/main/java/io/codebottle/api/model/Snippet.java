@@ -155,12 +155,12 @@ public class Snippet extends AbstractEntity {
 
                             // this will never happen
                             if (i == -1) throw new AssertionError("something fucked up happened to your jvm");
+                        }
 
-                            while (i < data.size()) {
-                                revisions.add(new Revision(context, data.get(i), i));
+                        while (i < data.size()) {
+                            revisions.add(new Revision(context, data.get(i), i));
 
-                                i++;
-                            }
+                            i++;
                         }
 
                         return Collections.unmodifiableList(revisions);
