@@ -242,7 +242,7 @@ public class Snippet extends AbstractEntity {
         @Override 
         @Contract(pure = true)
         public int compareTo(@NotNull Snippet.Revision other) {
-            return 0;
+            return REVISION_COMPARATOR.compare(this, other);
         }
     }
 }
