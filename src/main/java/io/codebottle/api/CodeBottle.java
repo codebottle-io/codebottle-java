@@ -21,7 +21,7 @@ import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * API Class. Create an instance of this using {@link #builder()} to use the API.
+ * API Class. Create an instance of this using {@code #builder()} to use the API.
  */
 @Builder
 public final class CodeBottle {
