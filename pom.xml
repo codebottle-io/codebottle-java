@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>io.codebottle</groupId>
+  <artifactId>api</artifactId>
+  <version>0.1.0</version>
+  <name>CodeBottle API</name>
+  <description>Java wrapper for the CodeBottle API</description>
+  <url>https://github.com/codebottle-io/codebottle-java</url>
+  <inceptionYear>2019</inceptionYear>
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>http://www.opensource.org/licenses/mit-license.php</url>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>burdoto</id>
+      <name>Tobias Burdow</name>
+      <email>burdoto@outlook.com</email>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:git:git://github.com/codebottle-io/codebottle-java.git</connection>
+    <developerConnection>scm:git:ssh://github.com/codebottle-io/codebottle-java.git</developerConnection>
+    <url>https://github.com/codebottle-io/codebottle-java</url>
+  </scm>
+  <dependencies>
+    <dependency>
+      <groupId>com.squareup.okhttp3</groupId>
+      <artifactId>okhttp</artifactId>
+      <version>4.1.0</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.10.0.pr1</version>
+      <scope>runtime</scope>
+    </dependency>
+  </dependencies>
+</project>
