@@ -183,7 +183,7 @@ public final class CodeBottle {
                 .collect(Collectors.toList());
     }
 
-    public CompletableFuture<Snippet.Revision> requestSnippetRevision(String snippetId, int id) {
+    public CompletableFuture<Snippet.Revision> requestSnippetRevisionByID(String snippetId, int id) {
         return getSnippetByID(snippetId)
                 .orElseGet(() -> requestSnippetByID(snippetId).join())
                 .requestRevision(id);
