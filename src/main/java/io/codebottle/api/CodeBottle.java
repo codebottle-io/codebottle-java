@@ -193,4 +193,18 @@ public final class CodeBottle {
                 .orElseGet(() -> requestSnippetByID(snippetId).join())
                 .requestRevisions();
     }
+    
+    public CompletableFuture<Collection<Snippet.Revision>> requestAllRevisions() {
+        return requestSnippets()
+                .thenApply(snippets -> {
+                    Collection<Snippet.Revision> yields = new ArrayList<>();
+                    
+                    (snippets.size() > 200 ? snippets.parallelStream() : snippets.stream())
+                            .map(Snippet::requestRevisions)
+                            .map(CompletableFuture::join)
+                            .forEach(yields::addAll);
+                    
+                    return yields;
+                });
+    }
 }
