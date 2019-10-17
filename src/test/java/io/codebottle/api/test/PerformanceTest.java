@@ -3,33 +3,44 @@ package io.codebottle.api.test;
 import java.util.concurrent.CompletableFuture;
 
 import io.codebottle.api.CodeBottle;
-import io.codebottle.api.model.Snippet;
-import org.junit.Before;
 import org.junit.Test;
 
 import static java.lang.System.currentTimeMillis;
+import static java.lang.System.out;
+import static org.junit.Assert.assertNotEquals;
 
 public class PerformanceTest {
     @Test
     public void requestEverything() {
-        long start, end;
-        
-        System.out.printf("Started requesting everything at %d epoch\n", start = currentTimeMillis());
-        
+        final long start = currentTimeMillis();
+
+        out.print("Requesting everything...");
+
         final CodeBottle codeBottle = CodeBottle.builder().build();
 
-        codeBottle.requestSnippets().join()
-                .stream()
-                .map(Snippet::requestRevisions)
-                .forEachOrdered(CompletableFuture::join);
-        
-        System.out.printf("Finished ingesting everything at %d epoch; took %d milliseconds\n\n", end = currentTimeMillis(), end - start);
+        // wait for all loading to finish
+        CompletableFuture.allOf(codeBottle.lazyLoading, codeBottle.requestAllRevisions())
+                .join();
+
+        out.print(" OK!\n");
 
         final int languageCount = codeBottle.getLanguages().size();
         final int categoryCount = codeBottle.getCategories().size();
         final int snippetCount = codeBottle.getSnippets().size();
         final int revisionCount = codeBottle.getSnippetRevisions().size();
 
-        System.out.printf("Requested:\n\tLanguages:\t%d\n\tCategories:\t%d\n\tSnippets:\t%d\n\tRevisions:\t%d\n", languageCount, categoryCount, snippetCount, revisionCount);
-    } 
+        out.print("Checking for cache integrity...");
+
+        assertNotEquals(0, languageCount);
+        assertNotEquals(0, categoryCount);
+        assertNotEquals(0, snippetCount);
+        assertNotEquals(0, revisionCount);
+
+        out.print(" OK!\n");
+
+        out.printf("\nCache Summary:\n\tLanguages:\t%d\n\tCategories:\t%d\n\tSnippets:\t%d\n\tRevisions:\t%d",
+                languageCount, categoryCount, snippetCount, revisionCount);
+
+        out.printf("\n\nTook %d milliseconds.", currentTimeMillis() - start);
+    }
 }
