@@ -8,29 +8,36 @@ import static java.lang.String.format;
 public enum Endpoint {
     // Languages
     LANGUAGES("languages"),
-    LANGUAGE_SPECIFIC("language/%s"),
+    LANGUAGE_SPECIFIC("language/%s", 1),
 
     // Categories
     CATEGORIES("categories"),
-    CATEGORY_SPECIFIC("categories/%s"),
+    CATEGORY_SPECIFIC("categories/%s", 1),
 
     // Snippets
     SNIPPETS("snippets"),
-    SNIPPET_SPECIFIC("snippets/%s"),
+    SNIPPET_SPECIFIC("snippets/%s", 1),
     // Snippet Revisions
-    SNIPPET_REVISIONS("snippets/%s/revisions"),
-    SNIPPET_REVISION_SPECIFIC("snippets/%s/revisions/%s");
+    SNIPPET_REVISIONS("snippets/%s/revisions", 1),
+    SNIPPET_REVISION_SPECIFIC("snippets/%s/revisions/%s", 2);
 
     public static final String URL_BASE = "https://api.codebottle.io/";
 
     private final String appendix;
+    private final int requiredParameterCount;
 
     Endpoint(String appendix) {
         this.appendix = appendix;
+        this.requiredParameterCount = 0;
+    }
+
+    Endpoint(String appendix, int requiredParameterCount) {
+        this.appendix = appendix;
+        this.requiredParameterCount = requiredParameterCount;
     }
 
     public int getRequiredParameterCount() {
-        return appendix.split("%s").length - 1;
+        return requiredParameterCount;
     }
 
     public URL url(Object... args) throws IllegalArgumentException {
