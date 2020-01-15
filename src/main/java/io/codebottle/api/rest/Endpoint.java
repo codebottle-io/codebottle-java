@@ -36,10 +36,6 @@ public enum Endpoint {
         this.requiredParameterCount = requiredParameterCount;
     }
 
-    public int getRequiredParameterCount() {
-        return requiredParameterCount;
-    }
-
     public URL url(Object... args) throws IllegalArgumentException {
         final int parameterCount = getRequiredParameterCount();
 
@@ -56,5 +52,9 @@ public enum Endpoint {
         } catch (MalformedURLException e) {
             throw new AssertionError("Unexpected MalformedURLException", e);
         }
+    }
+
+    public int getRequiredParameterCount() {
+        return requiredParameterCount;
     }
 }

@@ -171,7 +171,7 @@ public class Snippet extends AbstractEntity {
 
     public static class Revision extends AbstractEntity implements Comparable<Revision> {
         public static final Comparator<Revision> REVISION_COMPARATOR = Comparator.comparingInt(entity -> Integer.parseInt(entity.getID()));
-        
+
         private @JsonProperty(required = true) String title;
         private @JsonProperty @Nullable String description;
         private @JsonProperty(required = true) String code;
@@ -237,7 +237,7 @@ public class Snippet extends AbstractEntity {
             return this;
         }
 
-        @Override 
+        @Override
         @Contract(pure = true)
         public int compareTo(@NotNull Snippet.Revision other) {
             return REVISION_COMPARATOR.compare(this, other);

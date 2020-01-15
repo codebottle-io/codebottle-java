@@ -60,18 +60,6 @@ public final class CodeBottleAPI {
     }
 
     /**
-     * Returns the {@link Language} matching the given {@code id} if found.
-     * Before {@link #lazyLoading} was completed, this will always return {@link Optional#empty()}.
-     *
-     * @param id is the ID of the desired language.
-     *
-     * @return the language matching the given {@code id}.
-     */
-    public Optional<Language> getLanguageByID(String id) {
-        return Optional.ofNullable(languageCache.get(id));
-    }
-
-    /**
      * Returns all cached {@link Language}s.
      * Before {@link #lazyLoading} was completed, the returned {@link Collection} will always be empty.
      *
@@ -104,6 +92,18 @@ public final class CodeBottleAPI {
     }
 
     /**
+     * Returns the {@link Language} matching the given {@code id} if found.
+     * Before {@link #lazyLoading} was completed, this will always return {@link Optional#empty()}.
+     *
+     * @param id is the ID of the desired language.
+     *
+     * @return the language matching the given {@code id}.
+     */
+    public Optional<Language> getLanguageByID(String id) {
+        return Optional.ofNullable(languageCache.get(id));
+    }
+
+    /**
      * Requests all {@link Language}s and refreshes them in the cache.
      *
      * @return a future that will complete with all cached {@link Language}s.
@@ -127,18 +127,6 @@ public final class CodeBottleAPI {
                                 .collect(Collectors.toList());
                     }
                 });
-    }
-
-    /**
-     * Returns the {@link Category} matching the given {@code id} if found in cache.
-     * Before {@link #lazyLoading} was completed, this will always return {@link Optional#empty()}.
-     *
-     * @param id is the ID of the desired category.
-     *
-     * @return the category matching the given {@code id}.
-     */
-    public Optional<Category> getCategoryByID(String id) {
-        return Optional.ofNullable(categoryCache.get(id));
     }
 
     /**
@@ -174,6 +162,18 @@ public final class CodeBottleAPI {
     }
 
     /**
+     * Returns the {@link Category} matching the given {@code id} if found in cache.
+     * Before {@link #lazyLoading} was completed, this will always return {@link Optional#empty()}.
+     *
+     * @param id is the ID of the desired category.
+     *
+     * @return the category matching the given {@code id}.
+     */
+    public Optional<Category> getCategoryByID(String id) {
+        return Optional.ofNullable(categoryCache.get(id));
+    }
+
+    /**
      * Requests all {@link Category}s and refreshes them in the cache.
      *
      * @return a future that will complete with all cached {@linkplain Category categories}.
@@ -200,71 +200,12 @@ public final class CodeBottleAPI {
     }
 
     /**
-     * Returns the {@link Snippet} matching the given {@code id} if found.
-     *
-     * @param id is the ID of the desired snippet.
-     *
-     * @return the snippet matching the given {@code id}.
-     */
-    public Optional<Snippet> getSnippetByID(String id) {
-        return Optional.ofNullable(snippetCache.get(id));
-    }
-
-    /**
      * Returns all cached {@link Snippet}s.
      *
      * @return a {@link Collection} of all cached snippets.
      */
     public Collection<Snippet> getSnippets() {
         return snippetCache.values();
-    }
-
-    /**
-     * Requests the snippet by the given {@code id} and synchronizes the cache when deserializing the result.
-     *
-     * @param id is the {@code id} of the {@link Snippet} to request.
-     *
-     * @return a future that will complete with the requested {@link Snippet} after updating it in the cache.
-     */
-    public CompletableFuture<Snippet> requestSnippetByID(String id) {
-        return new CodeBottleRequest<Snippet>(this)
-                .to(Endpoint.SNIPPET_SPECIFIC, id)
-                .makeGET()
-                .then(data -> {
-                    synchronized (snippetCache) {
-                        return getSnippetByID(id)
-                                .map(entity -> entity.update(data))
-                                .orElseGet(() -> snippetCache.compute(id,
-                                        // existing values don't matter here, as the cache access failed before
-                                        (k, v) -> new Snippet(this, data)));
-                    }
-                });
-    }
-
-    /**
-     * Requests all {@link Snippet}s and refreshes them in the cache.
-     *
-     * @return a future that will complete with all cached {@link Snippet}s.
-     */
-    public CompletableFuture<Collection<Snippet>> requestSnippets() {
-        return new CodeBottleRequest<Collection<Snippet>>(this)
-                .to(Endpoint.SNIPPETS)
-                .makeGET()
-                .then(data -> {
-                    synchronized (snippetCache) {
-                        return StreamSupport.stream(data.spliterator(), false)
-                                .map(node -> getSnippetByID(node.path("id").asText())
-                                        .map(entity -> entity.update(node))
-                                        .orElseGet(() -> {
-                                            final Snippet snippet = new Snippet(this, node);
-
-                                            snippetCache.compute(snippet.getID(), (k, v) -> snippet);
-
-                                            return snippet;
-                                        }))
-                                .collect(Collectors.toList());
-                    }
-                });
     }
 
     /**
@@ -306,6 +247,39 @@ public final class CodeBottleAPI {
     }
 
     /**
+     * Returns the {@link Snippet} matching the given {@code id} if found.
+     *
+     * @param id is the ID of the desired snippet.
+     *
+     * @return the snippet matching the given {@code id}.
+     */
+    public Optional<Snippet> getSnippetByID(String id) {
+        return Optional.ofNullable(snippetCache.get(id));
+    }
+
+    /**
+     * Requests the snippet by the given {@code id} and synchronizes the cache when deserializing the result.
+     *
+     * @param id is the {@code id} of the {@link Snippet} to request.
+     *
+     * @return a future that will complete with the requested {@link Snippet} after updating it in the cache.
+     */
+    public CompletableFuture<Snippet> requestSnippetByID(String id) {
+        return new CodeBottleRequest<Snippet>(this)
+                .to(Endpoint.SNIPPET_SPECIFIC, id)
+                .makeGET()
+                .then(data -> {
+                    synchronized (snippetCache) {
+                        return getSnippetByID(id)
+                                .map(entity -> entity.update(data))
+                                .orElseGet(() -> snippetCache.compute(id,
+                                        // existing values don't matter here, as the cache access failed before
+                                        (k, v) -> new Snippet(this, data)));
+                    }
+                });
+    }
+
+    /**
      * Requests all {@link Snippet.Revision}s of the defined {@linkplain Snippet snippet id} and refreshes them in the cache.
      *
      * @return a future that will complete with all cached {@link Snippet.Revision}s.
@@ -335,6 +309,32 @@ public final class CodeBottleAPI {
                 });
     }
 
+    /**
+     * Requests all {@link Snippet}s and refreshes them in the cache.
+     *
+     * @return a future that will complete with all cached {@link Snippet}s.
+     */
+    public CompletableFuture<Collection<Snippet>> requestSnippets() {
+        return new CodeBottleRequest<Collection<Snippet>>(this)
+                .to(Endpoint.SNIPPETS)
+                .makeGET()
+                .then(data -> {
+                    synchronized (snippetCache) {
+                        return StreamSupport.stream(data.spliterator(), false)
+                                .map(node -> getSnippetByID(node.path("id").asText())
+                                        .map(entity -> entity.update(node))
+                                        .orElseGet(() -> {
+                                            final Snippet snippet = new Snippet(this, node);
+
+                                            snippetCache.compute(snippet.getID(), (k, v) -> snippet);
+
+                                            return snippet;
+                                        }))
+                                .collect(Collectors.toList());
+                    }
+                });
+    }
+
     public OkHttpClient getHttpClient() {
         return httpClient;
     }
@@ -349,13 +349,13 @@ public final class CodeBottleAPI {
             return Optional.ofNullable(token);
         }
 
+        public void removeToken() {
+            setToken(null);
+        }
+
         @Deprecated
         public void setToken(@Nullable String token) {
             this.token = token;
-        }
-
-        public void removeToken() {
-            setToken(null);
         }
 
         public Optional<OkHttpClient> getHttpClient() {

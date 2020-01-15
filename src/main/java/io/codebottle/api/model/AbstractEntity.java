@@ -16,6 +16,8 @@ public abstract class AbstractEntity {
         update(data);
     }
 
+    public abstract AbstractEntity update(JsonNode data);
+
     public AbstractEntity(CodeBottleAPI context, int id) {
         this.context = context;
 
@@ -29,6 +31,4 @@ public abstract class AbstractEntity {
     public CodeBottleAPI getContext() {
         return context;
     }
-
-    public abstract AbstractEntity update(JsonNode data);
 }

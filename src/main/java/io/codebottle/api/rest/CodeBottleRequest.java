@@ -66,15 +66,15 @@ public final class CodeBottleRequest<T> {
         return context;
     }
 
+    public CodeBottleRequest<T> makeGET() {
+        //noinspection ConstantConditions
+        return make(Method.GET, null);
+    }
+
     public CodeBottleRequest<T> make(Method method, JsonNode withData) {
         httpRequest.method(method.name(), method == Method.GET ? null : RequestBody.create(withData.toString(), MediaType.parse("application/json")));
 
         return this;
-    }
-
-    public CodeBottleRequest<T> makeGET() {
-        //noinspection ConstantConditions
-        return make(Method.GET, null);
     }
 
     public CodeBottleRequest<T> to(Endpoint endpoint, Object... at) throws IllegalArgumentException {

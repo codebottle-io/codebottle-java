@@ -85,6 +85,10 @@ public final class HTTPCodes {
 
     private static final Field[] fields = HTTPCodes.class.getFields();
 
+    public static String getString(int code) {
+        return String.valueOf(getName(code)).toUpperCase() + '[' + code + ']';
+    }
+
     public static @Nullable String getName(int code) {
         try {
             for (Field field : fields)
@@ -95,9 +99,5 @@ public final class HTTPCodes {
         }
 
         return null;
-    }
-
-    public static String getString(int code) {
-        return String.valueOf(getName(code)).toUpperCase() + '[' + code + ']';
     }
 }
