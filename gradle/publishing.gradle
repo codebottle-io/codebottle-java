@@ -69,8 +69,6 @@ if (!System.getenv().containsKey("JITPACK")) {
     }
 }
 
-tasks.removeAll([promoteRepository, closeAndPromoteRepository, getStagingProfile])
-
 nexusStaging {
     username sonatypeUsername
     password sonatypePassword
