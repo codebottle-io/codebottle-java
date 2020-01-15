@@ -25,7 +25,7 @@ public final class CodeBottleAPI {
     private final Map<String, Language> languageCache = new ConcurrentHashMap<>();
     private final Map<String, Category> categoryCache = new ConcurrentHashMap<>();
     private final Map<String, Snippet> snippetCache = new ConcurrentHashMap<>();
-    private final @Nullable String token;
+    private @Deprecated final @Nullable String token;
     private final OkHttpClient httpClient;
     /**
      * A {@link CompletableFuture} that completes once lazy loading was finished.
@@ -51,6 +51,10 @@ public final class CodeBottleAPI {
         return this;
     }
 
+    /**
+     * @deprecated Might be used later.
+     */
+    @Deprecated
     public Optional<String> getToken() {
         return Optional.ofNullable(token);
     }
@@ -336,13 +340,16 @@ public final class CodeBottleAPI {
     }
 
     public final static class Builder {
+        @Deprecated
         private @Nullable String token = null;
         private OkHttpClient httpClient = new OkHttpClient.Builder().build();
 
+        @Deprecated
         public Optional<String> getToken() {
             return Optional.ofNullable(token);
         }
 
+        @Deprecated
         public void setToken(@Nullable String token) {
             this.token = token;
         }
