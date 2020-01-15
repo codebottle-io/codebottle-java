@@ -51,7 +51,6 @@ public final class CodeBottle {
         return this;
     }
 
-    @SuppressWarnings("ConstantConditions")
     public Optional<String> getToken() {
         return Optional.ofNullable(token);
     }
