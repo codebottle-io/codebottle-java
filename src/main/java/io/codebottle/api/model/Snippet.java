@@ -11,7 +11,7 @@ import java.util.concurrent.CompletableFuture;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-import io.codebottle.api.CodeBottle;
+import io.codebottle.api.CodeBottleAPI;
 import io.codebottle.api.rest.CodeBottleRequest;
 import io.codebottle.api.rest.Endpoint;
 import org.jetbrains.annotations.Contract;
@@ -32,7 +32,7 @@ public class Snippet extends AbstractEntity {
     private @JsonProperty(required = true) Instant createdAt;
     private @JsonProperty(required = true) Instant updatedAt;
 
-    public Snippet(CodeBottle context, JsonNode data) {
+    public Snippet(CodeBottleAPI context, JsonNode data) {
         super(context, data);
 
         revisions = new ArrayList<>();
@@ -181,7 +181,7 @@ public class Snippet extends AbstractEntity {
         private @JsonProperty(required = true) String explanation;
         private @JsonProperty(required = true) Instant createdAt;
 
-        protected Revision(CodeBottle context, JsonNode data, int index) {
+        protected Revision(CodeBottleAPI context, JsonNode data, int index) {
             super(context, index);
         }
 

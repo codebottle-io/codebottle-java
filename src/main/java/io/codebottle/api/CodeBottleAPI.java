@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * API Class. Create an instance of this using {@code #builder()} to use the API.
  */
-public final class CodeBottle {
+public final class CodeBottleAPI {
     private final Map<String, Language> languageCache = new ConcurrentHashMap<>();
     private final Map<String, Category> categoryCache = new ConcurrentHashMap<>();
     private final Map<String, Snippet> snippetCache = new ConcurrentHashMap<>();
@@ -34,7 +34,7 @@ public final class CodeBottle {
      */
     public final CompletableFuture<Void> lazyLoading = CompletableFuture.allOf(requestLanguages(), requestCategories());
 
-    private CodeBottle(@Nullable String token, OkHttpClient httpClient) {
+    private CodeBottleAPI(@Nullable String token, OkHttpClient httpClient) {
         this.token = token;
         this.httpClient = httpClient;
     }
@@ -43,9 +43,9 @@ public final class CodeBottle {
      * Waits for {@linkplain #lazyLoading lazy loading} to finish using {@link CompletableFuture#join()}.
      * This method is intended to be used for API chaining, otherwise it is recommended to wait for {@link #lazyLoading} yourself.
      *
-     * @return this {@link CodeBottle} instance.
+     * @return this {@link CodeBottleAPI} instance.
      */
-    public CodeBottle waitForLazyLoading() {
+    public CodeBottleAPI waitForLazyLoading() {
         lazyLoading.join();
 
         return this;
@@ -359,8 +359,8 @@ public final class CodeBottle {
             this.httpClient = httpClient;
         }
 
-        public CodeBottle build() {
-            return new CodeBottle(token, httpClient);
+        public CodeBottleAPI build() {
+            return new CodeBottleAPI(token, httpClient);
         }
     }
 }

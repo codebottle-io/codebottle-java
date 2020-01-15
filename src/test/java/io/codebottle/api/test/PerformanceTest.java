@@ -2,7 +2,7 @@ package io.codebottle.api.test;
 
 import java.util.concurrent.CompletableFuture;
 
-import io.codebottle.api.CodeBottle;
+import io.codebottle.api.CodeBottleAPI;
 import org.junit.Test;
 
 import static java.lang.System.currentTimeMillis;
@@ -16,18 +16,18 @@ public class PerformanceTest {
 
         out.print("Requesting everything...");
 
-        final CodeBottle codeBottle = new CodeBottle.Builder().build();
+        final CodeBottleAPI codeBottleAPI = new CodeBottleAPI.Builder().build();
 
         // wait for all loading to finish
-        CompletableFuture.allOf(codeBottle.lazyLoading, codeBottle.requestAllRevisions())
+        CompletableFuture.allOf(codeBottleAPI.lazyLoading, codeBottleAPI.requestAllRevisions())
                 .join();
 
         out.print(" OK!\n");
 
-        final int languageCount = codeBottle.getLanguages().size();
-        final int categoryCount = codeBottle.getCategories().size();
-        final int snippetCount = codeBottle.getSnippets().size();
-        final int revisionCount = codeBottle.getSnippetRevisions().size();
+        final int languageCount = codeBottleAPI.getLanguages().size();
+        final int categoryCount = codeBottleAPI.getCategories().size();
+        final int snippetCount = codeBottleAPI.getSnippets().size();
+        final int revisionCount = codeBottleAPI.getSnippetRevisions().size();
 
         out.print("Checking for cache integrity...");
 

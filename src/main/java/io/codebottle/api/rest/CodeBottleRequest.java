@@ -8,7 +8,7 @@ import java.util.function.Function;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.codebottle.api.CodeBottle;
+import io.codebottle.api.CodeBottleAPI;
 import io.codebottle.api.rest.exception.UnexpectedStatusCodeException;
 import okhttp3.Call;
 import okhttp3.MediaType;
@@ -44,7 +44,7 @@ public final class CodeBottleRequest<T> {
     private final static ObjectMapper objectMapper;
 
     private final Request.Builder httpRequest;
-    private final CodeBottle context;
+    private final CodeBottleAPI context;
 
     private int expected = HTTPCodes.OK;
 
@@ -52,7 +52,7 @@ public final class CodeBottleRequest<T> {
         objectMapper = new ObjectMapper();
     }
 
-    public CodeBottleRequest(CodeBottle context) {
+    public CodeBottleRequest(CodeBottleAPI context) {
         this.context = context;
         this.httpRequest = new Request.Builder()
                 .addHeader("Accept", "application/vnd.codebottle.v1+json"); // fixed request header
@@ -62,7 +62,7 @@ public final class CodeBottleRequest<T> {
         context.getToken().ifPresent(token -> httpRequest.addHeader("Authorization", token));
     }
 
-    public CodeBottle getContext() {
+    public CodeBottleAPI getContext() {
         return context;
     }
 
