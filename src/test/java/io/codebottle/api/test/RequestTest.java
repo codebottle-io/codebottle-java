@@ -12,7 +12,7 @@ public class RequestTest {
 
     @Before
     public void setUp() {
-        codeBottle = CodeBottle.builder()
+        codeBottle = new CodeBottle.Builder()
                 .build()
                 .waitForLazyLoading();
     }

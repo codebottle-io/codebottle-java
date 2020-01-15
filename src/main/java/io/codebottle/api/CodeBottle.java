@@ -15,29 +15,29 @@ import io.codebottle.api.model.Language;
 import io.codebottle.api.model.Snippet;
 import io.codebottle.api.rest.CodeBottleRequest;
 import io.codebottle.api.rest.Endpoint;
-import lombok.Builder;
-import lombok.Getter;
 import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * API Class. Create an instance of this using {@code #builder()} to use the API.
  */
-@Builder
 public final class CodeBottle {
     private final Map<String, Language> languageCache = new ConcurrentHashMap<>();
     private final Map<String, Category> categoryCache = new ConcurrentHashMap<>();
     private final Map<String, Snippet> snippetCache = new ConcurrentHashMap<>();
-    @Builder.Default
-    private final @Nullable String token = null;
-    @Builder.Default
-    private @Getter final OkHttpClient httpClient = new OkHttpClient.Builder().build();
+    private final @Nullable String token;
+    private final OkHttpClient httpClient;
     /**
      * A {@link CompletableFuture} that completes once lazy loading was finished.
      * <p>
      * Lazy loading is calling {@link #requestLanguages()} and {@link #requestCategories()} on API construction.
      */
     public final CompletableFuture<Void> lazyLoading = CompletableFuture.allOf(requestLanguages(), requestCategories());
+
+    private CodeBottle(@Nullable String token, OkHttpClient httpClient) {
+        this.token = token;
+        this.httpClient = httpClient;
+    }
 
     /**
      * Waits for {@linkplain #lazyLoading lazy loading} to finish using {@link CompletableFuture#join()}.
@@ -330,5 +330,38 @@ public final class CodeBottle {
 
                     return yields;
                 });
+    }
+
+    public OkHttpClient getHttpClient() {
+        return httpClient;
+    }
+
+    public final static class Builder {
+        private @Nullable String token = null;
+        private OkHttpClient httpClient = new OkHttpClient.Builder().build();
+
+        public Optional<String> getToken() {
+            return Optional.ofNullable(token);
+        }
+
+        public void setToken(@Nullable String token) {
+            this.token = token;
+        }
+
+        public void removeToken() {
+            setToken(null);
+        }
+
+        public Optional<OkHttpClient> getHttpClient() {
+            return Optional.ofNullable(httpClient);
+        }
+
+        public void setHttpClient(OkHttpClient httpClient) {
+            this.httpClient = httpClient;
+        }
+
+        public CodeBottle build() {
+            return new CodeBottle(token, httpClient);
+        }
     }
 }

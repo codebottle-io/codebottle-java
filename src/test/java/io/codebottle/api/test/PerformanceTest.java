@@ -16,7 +16,7 @@ public class PerformanceTest {
 
         out.print("Requesting everything...");
 
-        final CodeBottle codeBottle = CodeBottle.builder().build();
+        final CodeBottle codeBottle = new CodeBottle.Builder().build();
 
         // wait for all loading to finish
         CompletableFuture.allOf(codeBottle.lazyLoading, codeBottle.requestAllRevisions())
